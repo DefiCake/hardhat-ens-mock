@@ -1,6 +1,7 @@
 // If your plugin extends types from another plugin, you should import the plugin here.
 
 // To extend one of Hardhat's types, you need to import the module where it has been defined, and redeclare it.
+import { JsonRpcServer } from "hardhat/types";
 import "hardhat/types/config";
 import "hardhat/types/runtime";
 
@@ -23,6 +24,19 @@ declare module "hardhat/types/config" {
   export interface ProjectPathsConfig {
     newPath: string;
   }
+
+  export interface EnsMockConfig {
+    enabled?: boolean;
+    ensOwnerAccount?: number;
+  }
+
+  export interface HardhatNetworkConfig {
+    ensMock?: EnsMockConfig;
+  }
+
+  export interface HardhatNetworkUserConfig {
+    ensMock?: EnsMockConfig;
+  }
 }
 
 declare module "hardhat/types/runtime" {
@@ -30,5 +44,6 @@ declare module "hardhat/types/runtime" {
   // This new field will be available in tasks' actions, scripts, and tests.
   export interface HardhatRuntimeEnvironment {
     example: ExampleHardhatRuntimeEnvironmentField;
+    server: JsonRpcServer;
   }
 }

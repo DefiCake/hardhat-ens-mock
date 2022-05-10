@@ -1,0 +1,6 @@
+{
+  "watch": ["src", "test"],
+  "ignore": ["./src/**/*.spec.ts", "./**/typechain"],
+  "ext": "js, ts, sol",
+  "exec": "npm run test"
+}
