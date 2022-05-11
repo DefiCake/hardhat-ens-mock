@@ -146,3 +146,10 @@ Setting `ensOwnerAccount` to 3 will make `0x90f79bf6eb2c4f870365e785982e1f101e93
 ## Usage
 
 You can now use ENS in your ethers or web3 framework as usual once the plugin is imported
+
+## Some resources used to build this plugin
+
+https://programtheblockchain.com/posts/2018/03/09/understanding-ethereum-smart-contract-storage/
+http://man.hubwiz.com/docset/Ethereum.docset/Contents/Resources/Documents/eth_getStorageAt.html
+https://www.npmjs.com/package/@ensdomains/ens-contracts
+https://docs.ens.domains/contract-api-reference/name-processing
