@@ -14,7 +14,7 @@ import {
 import "./type-extensions";
 import { setDomainOwner, setDomainResolver, setupEnsMock } from "./utils";
 import { ENS_REGISTRY_ADDRESS } from "./constants";
-import { EnsMockConfig } from "../types";
+import { EnsMockConfig } from "./types";
 
 extendConfig(
   (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {
