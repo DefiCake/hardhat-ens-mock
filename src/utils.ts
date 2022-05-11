@@ -52,14 +52,6 @@ export async function setupEnsMock(
     await deployNewENS(hre);
   }
 
-  if (!!hre.ethers) {
-    hre.ethers.provider.network.ensAddress = ENS_REGISTRY_ADDRESS;
-  }
-
-  if (!!hre.web3) {
-    ((hre.web3 as unknown) as any).eth.ens.registryAddress = ENS_REGISTRY_ADDRESS;
-  }
-
   const accounts: string[] = await hre.network.provider.send("eth_accounts");
 
   await hre.network.provider.send("hardhat_setStorageAt", [

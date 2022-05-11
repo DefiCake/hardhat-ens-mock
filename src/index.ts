@@ -14,6 +14,7 @@ import {
 import "./type-extensions";
 import { setDomainOwner, setDomainResolver, setupEnsMock } from "./utils";
 import { EnsMockConfig } from "./type-extensions";
+import { ENS_REGISTRY_ADDRESS } from "./constants";
 
 extendConfig(
   (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {
@@ -29,6 +30,10 @@ extendConfig(
 );
 
 extendEnvironment((hre) => {
+  if (hre.network.name != HARDHAT_NETWORK_NAME) return;
+  const ensMock = hre.config.networks[HARDHAT_NETWORK_NAME].ensMock;
+  if (!ensMock?.enabled) return;
+
   const setDomainOwnerFunction = setDomainOwner(hre);
   const setDomainResolverFunction = setDomainResolver(hre);
   hre.ensMock = {
@@ -36,6 +41,14 @@ extendEnvironment((hre) => {
     setDomainOwner: setDomainOwnerFunction,
     setDomainResolver: setDomainResolverFunction,
   };
+
+  if (!!hre.ethers)
+    hre.ethers.provider._networkPromise.then(
+      (network) => (network.ensAddress = ENS_REGISTRY_ADDRESS)
+    );
+
+  if (!!hre.web3)
+    ((hre.web3 as unknown) as any).eth.ens.registryAddress = ENS_REGISTRY_ADDRESS;
 });
 
 subtask(TASK_NODE_CREATE_SERVER).setAction(async (args, hre, runSuper) => {
@@ -51,7 +64,6 @@ subtask(TASK_NODE_GET_PROVIDER).setAction(async (args, hre, runSuper) => {
   const provider = await runSuper(args);
 
   if (hre.network.name != HARDHAT_NETWORK_NAME) return provider;
-
   const ensMock = hre.config.networks[HARDHAT_NETWORK_NAME].ensMock;
   if (!ensMock?.enabled) return provider;
 
@@ -65,7 +77,6 @@ subtask(TASK_TEST_SETUP_TEST_ENVIRONMENT).setAction(
     await runSuper(args);
 
     if (hre.network.name != HARDHAT_NETWORK_NAME) return;
-
     const ensMock = hre.config.networks[HARDHAT_NETWORK_NAME].ensMock;
     if (!ensMock?.enabled) return;
 
