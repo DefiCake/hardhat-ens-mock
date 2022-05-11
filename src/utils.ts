@@ -1,6 +1,8 @@
+import { isAddress } from "@ethersproject/address";
 import { BigNumber } from "@ethersproject/bignumber";
 import { hexZeroPad } from "@ethersproject/bytes";
 import { HashZero } from "@ethersproject/constants";
+import { namehash } from "@ethersproject/hash";
 import { keccak256 } from "@ethersproject/solidity";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ENS_REGISTRY_ADDRESS, ENS_REGISTRY_BYTECODE } from "./constants";
@@ -14,10 +16,18 @@ export async function addressIsContract(
     .then((code) => code.length > 2);
 }
 
-export function getEnsStorageSlots(
-  key: string,
-  hre: HardhatRuntimeEnvironment
-) {
+export function getEnsStorageSlots(key: string) {
+  // To access the storage slot of an entry in the private mapping located at ENS,
+  // it is needed to keccak256(key + slot of mapping). Since the key
+  // is a number, and the mapping of owners is the first storage slot in the contract,
+  // then slot = keccak256(key, 0).
+
+  // Then, this storage slot is a struct of [address owner,address resolver,uint ttl].
+  // The slot generated from the keccak will point us to the first 32 bytes of the struct,
+  // which will contain `address owner`.
+  // The next slot (i.e. the next 32 bytes) will contain `address resolver`.
+  // The next slot will contain `uint ttl`.
+
   const ownerSlot = keccak256(
     ["uint256", "uint256"],
     [BigNumber.from(key), "0"]
@@ -39,21 +49,44 @@ export async function setupEnsMock(
   ownerAccountIndex = 0
 ) {
   if ((await addressIsContract(ENS_REGISTRY_ADDRESS, hre)) === false) {
-    await hre.network.provider.send("hardhat_setCode", [
-      ENS_REGISTRY_ADDRESS,
-      ENS_REGISTRY_BYTECODE,
-    ]);
+    await deployNewENS(hre);
+  }
+
+  if (!!hre.ethers) {
+    hre.ethers.provider.network.ensAddress = ENS_REGISTRY_ADDRESS;
+  }
+
+  if (!!hre.web3) {
+    ((hre.web3 as unknown) as any).eth.ens.registryAddress = ENS_REGISTRY_ADDRESS;
   }
 
   const accounts: string[] = await hre.network.provider.send("eth_accounts");
 
   await hre.network.provider.send("hardhat_setStorageAt", [
     ENS_REGISTRY_ADDRESS,
-    getEnsStorageSlots(HashZero, hre).ownerSlot,
+    getEnsStorageSlots(HashZero).ownerSlot,
     hexZeroPad(accounts[ownerAccountIndex], 32),
   ]);
 }
 
-export async function overrideEnsDeployment() {}
+export function setDomainOwner(hre: HardhatRuntimeEnvironment) {
+  return async function (domain: string, owner: string) {
+    if (!isAddress(owner)) throw new Error(`${owner} is not a valid address`);
+    const node = namehash(domain);
+    await hre.network.provider.send("hardhat_setStorageAt", [
+      ENS_REGISTRY_ADDRESS,
+      getEnsStorageSlots(node).ownerSlot,
+      hexZeroPad(owner, 32),
+    ]);
+  };
+}
 
-export async function deployNewENS() {}
+export async function deployNewENS(
+  hre: HardhatRuntimeEnvironment,
+  at = ENS_REGISTRY_ADDRESS
+) {
+  await hre.network.provider.send("hardhat_setCode", [
+    at,
+    ENS_REGISTRY_BYTECODE,
+  ]);
+}
