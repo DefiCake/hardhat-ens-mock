@@ -81,6 +81,19 @@ export function setDomainOwner(hre: HardhatRuntimeEnvironment) {
   };
 }
 
+export function setDomainResolver(hre: HardhatRuntimeEnvironment) {
+  return async function (domain: string, resolver: string) {
+    if (!isAddress(resolver))
+      throw new Error(`${resolver} is not a valid address`);
+    const node = namehash(domain);
+    await hre.network.provider.send("hardhat_setStorageAt", [
+      ENS_REGISTRY_ADDRESS,
+      getEnsStorageSlots(node).resolverSlot,
+      hexZeroPad(resolver, 32),
+    ]);
+  };
+}
+
 export async function deployNewENS(
   hre: HardhatRuntimeEnvironment,
   at = ENS_REGISTRY_ADDRESS

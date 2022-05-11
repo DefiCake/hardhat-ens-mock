@@ -12,7 +12,7 @@ import {
 // This import is needed to let the TypeScript compiler know that it should include your type
 // extensions in your npm package's types file.
 import "./type-extensions";
-import { setDomainOwner, setupEnsMock } from "./utils";
+import { setDomainOwner, setDomainResolver, setupEnsMock } from "./utils";
 import { EnsMockConfig } from "./type-extensions";
 
 extendConfig(
@@ -30,11 +30,19 @@ extendConfig(
 
 extendEnvironment((hre) => {
   const setDomainOwnerFunction = setDomainOwner(hre);
-  hre.ensMock = { ...hre.ensMock, setDomainOwner: setDomainOwnerFunction };
+  const setDomainResolverFunction = setDomainResolver(hre);
+  hre.ensMock = {
+    ...hre.ensMock,
+    setDomainOwner: setDomainOwnerFunction,
+    setDomainResolver: setDomainResolverFunction,
+  };
 });
 
 subtask(TASK_NODE_CREATE_SERVER).setAction(async (args, hre, runSuper) => {
   const server = await runSuper(args);
+
+  if (hre.network.name != HARDHAT_NETWORK_NAME) return server;
+
   hre.ensMock = { ...hre.ensMock, server };
   return server;
 });
