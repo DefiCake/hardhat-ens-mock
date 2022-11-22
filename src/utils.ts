@@ -54,9 +54,10 @@ export async function setupEnsMock(
 
   const accounts: string[] = await hre.network.provider.send("eth_accounts");
 
+  const ownerSlot = getEnsStorageSlots(HashZero).ownerSlot;
   await hre.network.provider.send("hardhat_setStorageAt", [
     ENS_REGISTRY_ADDRESS,
-    getEnsStorageSlots(HashZero).ownerSlot,
+    ownerSlot.replace(/0x0+/, "0x"),
     hexZeroPad(accounts[ownerAccountIndex], 32),
   ]);
 }
@@ -65,9 +66,10 @@ export function setDomainOwner(hre: HardhatRuntimeEnvironment) {
   return async function (domain: string, owner: string) {
     if (!isAddress(owner)) throw new Error(`${owner} is not a valid address`);
     const node = namehash(domain);
+    const ownerSlot = getEnsStorageSlots(node).ownerSlot;
     await hre.network.provider.send("hardhat_setStorageAt", [
       ENS_REGISTRY_ADDRESS,
-      getEnsStorageSlots(node).ownerSlot,
+      ownerSlot.replace(/0x0+/, "0x"),
       hexZeroPad(owner, 32),
     ]);
   };
@@ -78,9 +80,10 @@ export function setDomainResolver(hre: HardhatRuntimeEnvironment) {
     if (!isAddress(resolver))
       throw new Error(`${resolver} is not a valid address`);
     const node = namehash(domain);
+    const resolverSlot = getEnsStorageSlots(node).resolverSlot;
     await hre.network.provider.send("hardhat_setStorageAt", [
       ENS_REGISTRY_ADDRESS,
-      getEnsStorageSlots(node).resolverSlot,
+      resolverSlot.replace(/0x0+/, "0x"),
       hexZeroPad(resolver, 32),
     ]);
   };

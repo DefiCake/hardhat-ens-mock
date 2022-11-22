@@ -283,6 +283,25 @@ describe("ENS owner override", function () {
 
         assert.strictEqual(getAddress(firstAccount), getAddress(owner));
       });
+
+      it("should allow to override ENS domains with nodes featuring leading zeros (e.g. 0x00...abcd", async function () {
+        const domain = "relayhub.eth";
+        const provider = new EthersProviderWrapper(this.hre.network.provider);
+        const firstAccount = await provider.getSigner(0).getAddress();
+        await this.hre.ensMock.setDomainOwner(domain, firstAccount);
+
+        const ens = new ethers.Contract(
+          ENS_REGISTRY_ADDRESS,
+          ENS_ABI,
+          provider
+        );
+
+        const node = namehash(domain);
+
+        const owner: string = await ens.owner(node);
+
+        assert.strictEqual(getAddress(firstAccount), getAddress(owner));
+      });
     });
   });
 
