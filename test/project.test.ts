@@ -63,6 +63,18 @@ describe("ENS owner override", function () {
           }
         }, 1000);
       });
+
+      it("should expose setDomainOwner and setDomainResolver", function (done) {
+        setTimeout(async () => {
+          try {
+            assert.exists(this.hre.ensMock.setDomainResolver);
+            assert.exists(this.hre.ensMock.setDomainResolver);
+            done();
+          } catch (e) {
+            done(e);
+          }
+        }, 1000);
+      });
     });
 
     describe("with ensMock.enabled = true & ensMock.ensOwnerAccount", function () {

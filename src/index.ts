@@ -30,10 +30,6 @@ extendConfig(
 );
 
 extendEnvironment((hre) => {
-  if (hre.network.name != HARDHAT_NETWORK_NAME) return;
-  const ensMock = hre.config.networks[HARDHAT_NETWORK_NAME].ensMock;
-  if (!ensMock?.enabled) return;
-
   const setDomainOwnerFunction = setDomainOwner(hre);
   const setDomainResolverFunction = setDomainResolver(hre);
   hre.ensMock = {
@@ -41,6 +37,10 @@ extendEnvironment((hre) => {
     setDomainOwner: setDomainOwnerFunction,
     setDomainResolver: setDomainResolverFunction,
   };
+
+  if (hre.network.name != HARDHAT_NETWORK_NAME) return;
+  const ensMock = hre.config.networks[HARDHAT_NETWORK_NAME].ensMock;
+  if (!ensMock?.enabled) return;
 
   if (!!hre.ethers)
     hre.ethers.provider._networkPromise.then(
