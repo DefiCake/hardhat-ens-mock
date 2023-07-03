@@ -1,7 +1,7 @@
 import "./type-extensions";
 
 import { extendConfig, extendEnvironment, subtask } from "hardhat/config";
-import { HARDHAT_NETWORK_NAME, lazyObject } from "hardhat/plugins";
+import { HARDHAT_NETWORK_NAME } from "hardhat/plugins";
 import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
 import {
   TASK_NODE_CREATE_SERVER,
@@ -36,6 +36,7 @@ extendEnvironment((hre) => {
     ...hre.ensMock,
     setDomainOwner: setDomainOwnerFunction,
     setDomainResolver: setDomainResolverFunction,
+    setupEnsMock,
   };
 
   if (hre.network.name != HARDHAT_NETWORK_NAME) return;

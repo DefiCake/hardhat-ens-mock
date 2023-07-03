@@ -24,6 +24,10 @@ declare module "hardhat/types/runtime" {
       server: JsonRpcServer; // Purely for test purposes
       setDomainOwner: (domain: string, owner: string) => Promise<void>;
       setDomainResolver: (domain: string, resolver: string) => Promise<void>;
+      setupEnsMock: (
+        hre: HardhatRuntimeEnvironment,
+        ownerAccountIndex?: number
+      ) => Promise<void>;
     };
   }
 }

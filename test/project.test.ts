@@ -69,6 +69,7 @@ describe("ENS owner override", function () {
           try {
             assert.exists(this.hre.ensMock.setDomainResolver);
             assert.exists(this.hre.ensMock.setDomainResolver);
+            assert.exists(this.hre.ensMock.setupEnsMock);
             done();
           } catch (e) {
             done(e);
