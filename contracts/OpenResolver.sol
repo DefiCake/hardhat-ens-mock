@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.4;
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@ensdomains/ens-contracts/contracts/resolvers/profiles/ABIResolver.sol";
 import "@ensdomains/ens-contracts/contracts/resolvers/profiles/AddrResolver.sol";
 import "@ensdomains/ens-contracts/contracts/resolvers/profiles/ContentHashResolver.sol";
@@ -15,7 +14,6 @@ import "@ensdomains/ens-contracts/contracts/resolvers/profiles/ExtendedResolver.
  * A simple resolver anyone can use; allows any address to set any node
  */
 contract OpenResolver is
-  Ownable,
   ABIResolver,
   AddrResolver,
   ContentHashResolver,
@@ -26,8 +24,8 @@ contract OpenResolver is
   TextResolver,
   ExtendedResolver
 {
-  function isAuthorised(bytes32) internal view override returns (bool) {
-    return msg.sender == owner();
+  function isAuthorised(bytes32) internal pure override returns (bool) {
+    return true;
   }
 
   function supportsInterface(
