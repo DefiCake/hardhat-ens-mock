@@ -24,6 +24,9 @@ contract OpenResolver is
   TextResolver,
   ExtendedResolver
 {
+  bytes32 private constant OPEN_RESOLVER_DOMAIN =
+    0xad3c37868ae515dba167cae3a0604972edf91b84b773bb7f0d69e6c5bb930f59;
+
   function isAuthorised(bytes32) internal pure override returns (bool) {
     return true;
   }
@@ -47,5 +50,18 @@ contract OpenResolver is
     returns (bool)
   {
     return super.supportsInterface(interfaceID);
+  }
+
+  /**
+   * Returns the address associated with an ENS node.
+   * @param node The ENS node to query.
+   * @return The associated address.
+   */
+  function addr(
+    bytes32 node
+  ) public view virtual override returns (address payable) {
+    if (node == OPEN_RESOLVER_DOMAIN) return payable(address(this));
+
+    return AddrResolver.addr(node);
   }
 }

@@ -12,7 +12,10 @@ import {
   bytecode as ENS_RESOLVER_BYTECODE,
 } from "./artifacts/Resolver.json";
 
-import { ENS_REGISTRY_ADDRESS } from "../src/constants";
+import {
+  ENS_OPEN_RESOLVER_ADDRESS,
+  ENS_REGISTRY_ADDRESS,
+} from "../src/constants";
 
 import { useEnvironment } from "./helpers";
 import { HashZero } from "@ethersproject/constants";
@@ -384,6 +387,86 @@ describe("ENS owner override", function () {
       )
         .connect(firstAccount)
         .deploy();
+
+      await ens.connect(firstAccount).setResolver(node, resolver.address);
+      await resolver.functions["setAddr(bytes32,address)"](
+        node,
+        firstAccountAddress
+      );
+
+      const resolvedAddress = await this.hre.web3.eth.ens.getAddress(domain);
+
+      assert.strictEqual(
+        getAddress(firstAccountAddress),
+        getAddress(resolvedAddress)
+      );
+    });
+  });
+
+  describe("default ethers name resolution", () => {
+    useEnvironment("hardhat-ethers");
+
+    beforeEach(function () {
+      this.hre.run(TASK_TEST_SETUP_TEST_ENVIRONMENT);
+    });
+
+    it("can resolve names", async function () {
+      const domain = "random.eth";
+      const provider = this.hre.ethers.provider;
+      const firstAccount = provider.getSigner(0);
+      const firstAccountAddress = await firstAccount.getAddress();
+      await this.hre.ensMock.setDomainOwner(domain, firstAccountAddress);
+
+      const ens = new ethers.Contract(ENS_REGISTRY_ADDRESS, ENS_ABI, provider);
+
+      const node = namehash(domain);
+
+      const resolver = new ethers.Contract(
+        "resolver",
+        ENS_RESOLVER_ABI,
+        provider
+      ).connect(firstAccount);
+
+      await ens.connect(firstAccount).setResolver(node, resolver.address);
+      await resolver.functions["setAddr(bytes32,address)"](
+        node,
+        firstAccountAddress
+      );
+
+      const resolvedAddress = await provider.resolveName(domain);
+
+      if (!resolvedAddress) assert(false, "Resolved address returned null");
+
+      assert.strictEqual(
+        getAddress(firstAccountAddress),
+        getAddress(resolvedAddress!)
+      );
+    });
+  });
+
+  describe("default web3 name resolution", () => {
+    useEnvironment("hardhat-web3");
+
+    beforeEach(function () {
+      this.hre.run(TASK_TEST_SETUP_TEST_ENVIRONMENT);
+    });
+
+    it("can resolve names", async function () {
+      const domain = "random.eth";
+      const provider = new EthersProviderWrapper(this.hre.network.provider);
+      const firstAccount = provider.getSigner(0);
+      const firstAccountAddress = await firstAccount.getAddress();
+      await this.hre.ensMock.setDomainOwner(domain, firstAccountAddress);
+
+      const ens = new ethers.Contract(ENS_REGISTRY_ADDRESS, ENS_ABI, provider);
+
+      const node = namehash(domain);
+
+      const resolver = new ethers.Contract(
+        await this.hre.web3.eth.ens.getAddress("resolver"),
+        ENS_RESOLVER_ABI,
+        provider
+      ).connect(firstAccount);
 
       await ens.connect(firstAccount).setResolver(node, resolver.address);
       await resolver.functions["setAddr(bytes32,address)"](

@@ -5,7 +5,13 @@ import { HashZero } from "@ethersproject/constants";
 import { namehash } from "@ethersproject/hash";
 import { keccak256 } from "@ethersproject/solidity";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { ENS_REGISTRY_ADDRESS, ENS_REGISTRY_BYTECODE } from "./constants";
+import {
+  ENS_OPEN_RESOLVER_ADDRESS,
+  ENS_OPEN_RESOLVER_BYTECODE,
+  ENS_OPEN_RESOLVER_DOMAIN,
+  ENS_REGISTRY_ADDRESS,
+  ENS_REGISTRY_BYTECODE,
+} from "./constants";
 
 export async function addressIsContract(
   address: string,
@@ -60,6 +66,14 @@ export async function setupEnsMock(
     ownerSlot.replace(/0x0+/, "0x"),
     hexZeroPad(accounts[ownerAccountIndex], 32),
   ]);
+
+  const resolverSlot = getEnsStorageSlots(ENS_OPEN_RESOLVER_DOMAIN)
+    .resolverSlot;
+  await hre.network.provider.send("hardhat_setStorageAt", [
+    ENS_REGISTRY_ADDRESS,
+    resolverSlot.replace(/0x0+/, "0x"),
+    hexZeroPad(ENS_OPEN_RESOLVER_ADDRESS, 32),
+  ]);
 }
 
 export function setDomainOwner(hre: HardhatRuntimeEnvironment) {
@@ -91,10 +105,16 @@ export function setDomainResolver(hre: HardhatRuntimeEnvironment) {
 
 export async function deployNewENS(
   hre: HardhatRuntimeEnvironment,
-  at = ENS_REGISTRY_ADDRESS
+  at = ENS_REGISTRY_ADDRESS,
+  resolver = ENS_OPEN_RESOLVER_ADDRESS
 ) {
   await hre.network.provider.send("hardhat_setCode", [
     at,
     ENS_REGISTRY_BYTECODE,
+  ]);
+
+  await hre.network.provider.send("hardhat_setCode", [
+    resolver,
+    ENS_OPEN_RESOLVER_BYTECODE,
   ]);
 }
