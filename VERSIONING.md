@@ -1,0 +1,6 @@
+- Increase the version at `package.json` following semver
+- Log the changes in [CHANGELOG.md](./CHANGELOG.md)
+- Commit the change
+- Tag with `git tag -a <version>`
+- Push the changes with `git push origin master` and `git push origin --tags`
+- Run `npm publish`
