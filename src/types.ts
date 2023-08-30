@@ -4,5 +4,5 @@ export type EnsMockConfig = {
 };
 
 export interface RPC {
-  send: (method: string, params?: any[]) => Promise<any>;
+  send: (method: string, params?: any) => Promise<any>;
 }
