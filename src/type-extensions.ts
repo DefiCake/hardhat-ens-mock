@@ -3,7 +3,7 @@
 // To extend one of Hardhat's types, you need to import the module where it has been defined, and redeclare it.
 import "hardhat/types/runtime";
 import "hardhat/types/config";
-import { EnsMockConfig } from "./types";
+import { EnsMockConfig, RPC } from "./types";
 import { JsonRpcServer } from "hardhat/types";
 
 declare module "hardhat/types/config" {
@@ -22,8 +22,16 @@ declare module "hardhat/types/runtime" {
   interface HardhatRuntimeEnvironment {
     ensMock: {
       server: JsonRpcServer; // Purely for test purposes
-      setDomainOwner: (domain: string, owner: string) => Promise<void>;
-      setDomainResolver: (domain: string, resolver: string) => Promise<void>;
+      setDomainOwner: (
+        domain: string,
+        owner: string,
+        provider?: RPC
+      ) => Promise<void>;
+      setDomainResolver: (
+        domain: string,
+        resolver: string,
+        provider?: RPC
+      ) => Promise<void>;
       setupEnsMock: (
         hre: HardhatRuntimeEnvironment,
         ownerAccountIndex?: number

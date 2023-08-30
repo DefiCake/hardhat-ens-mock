@@ -12,6 +12,7 @@ import {
   ENS_REGISTRY_ADDRESS,
   ENS_REGISTRY_BYTECODE,
 } from "./constants";
+import { RPC } from "./types";
 
 export async function addressIsContract(
   address: string,
@@ -77,7 +78,11 @@ export async function setupEnsMock(
 }
 
 export function setDomainOwner(hre: HardhatRuntimeEnvironment) {
-  return async function (domain: string, owner: string) {
+  return async function (
+    domain: string,
+    owner: string,
+    provider: RPC = hre.network.provider
+  ) {
     if (!isAddress(owner)) throw new Error(`${owner} is not a valid address`);
     const node = namehash(domain);
     const ownerSlot = getEnsStorageSlots(node).ownerSlot;
@@ -90,7 +95,11 @@ export function setDomainOwner(hre: HardhatRuntimeEnvironment) {
 }
 
 export function setDomainResolver(hre: HardhatRuntimeEnvironment) {
-  return async function (domain: string, resolver: string) {
+  return async function (
+    domain: string,
+    resolver: string,
+    provider: RPC = hre.network.provider
+  ) {
     if (!isAddress(resolver))
       throw new Error(`${resolver} is not a valid address`);
     const node = namehash(domain);
