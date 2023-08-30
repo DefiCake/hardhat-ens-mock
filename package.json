@@ -1,6 +1,6 @@
 {
   "name": "hardhat-ens-mock",
-  "version": "beta0.2.1",
+  "version": "0.2.1-beta.0",
   "description": "Hardhat TypeScript plugin boilerplate",
   "repository": "github:deficake/hardhat-ens-mock",
   "author": "Nomic Labs LLC",
