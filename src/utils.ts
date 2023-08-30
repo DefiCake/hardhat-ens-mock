@@ -86,7 +86,7 @@ export function setDomainOwner(hre: HardhatRuntimeEnvironment) {
     if (!isAddress(owner)) throw new Error(`${owner} is not a valid address`);
     const node = namehash(domain);
     const ownerSlot = getEnsStorageSlots(node).ownerSlot;
-    await hre.network.provider.send("hardhat_setStorageAt", [
+    await provider.send("hardhat_setStorageAt", [
       ENS_REGISTRY_ADDRESS,
       ownerSlot.replace(/0x0+/, "0x"),
       hexZeroPad(owner, 32),
@@ -104,7 +104,7 @@ export function setDomainResolver(hre: HardhatRuntimeEnvironment) {
       throw new Error(`${resolver} is not a valid address`);
     const node = namehash(domain);
     const resolverSlot = getEnsStorageSlots(node).resolverSlot;
-    await hre.network.provider.send("hardhat_setStorageAt", [
+    await provider.send("hardhat_setStorageAt", [
       ENS_REGISTRY_ADDRESS,
       resolverSlot.replace(/0x0+/, "0x"),
       hexZeroPad(resolver, 32),
