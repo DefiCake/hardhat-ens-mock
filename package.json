@@ -60,8 +60,11 @@
     "@ensdomains/ens-contracts": "0.0.22",
     "@ethersproject/address": "^5.6.0",
     "@ethersproject/bignumber": "^5.6.0",
+    "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/constants": "^5.6.0",
     "@ethersproject/hash": "^5.6.0",
-    "@ethersproject/solidity": "^5.6.0"
+    "@ethersproject/keccak256": "^5.7.0",
+    "@ethersproject/solidity": "^5.6.0",
+    "@ethersproject/strings": "^5.7.0"
   }
 }

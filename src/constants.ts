@@ -1,4 +1,7 @@
-import { keccak256, namehash, toUtf8Bytes } from "ethers/lib/utils";
+import { namehash } from "@ethersproject/hash";
+import { toUtf8Bytes } from "@ethersproject/strings";
+import { keccak256 } from "@ethersproject/keccak256";
+
 import OPEN_RESOLVER from "./artifacts/OpenResolver.json";
 
 export const ENS_REGISTRY_BYTECODE =
