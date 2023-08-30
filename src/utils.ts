@@ -118,3 +118,20 @@ export async function deployNewENS(
     ENS_OPEN_RESOLVER_BYTECODE,
   ]);
 }
+
+export function hreIsEthersV5(hre: HardhatRuntimeEnvironment) {
+  return !!hre.ethers && "_networkPromise" in hre.ethers.provider;
+}
+
+export function hreIsEthersV6(hre: HardhatRuntimeEnvironment) {
+  const v6regExp = /^6\.\d+\.\d+/;
+
+  return !!hre.ethers && v6regExp.test(hre.ethers.version);
+}
+
+export function hreIsWeb3JS(hre: HardhatRuntimeEnvironment) {
+  return (
+    !!hre.web3 &&
+    (((hre.web3 as unknown) as any).eth.ens.registryAddress = ENS_REGISTRY_ADDRESS)
+  );
+}

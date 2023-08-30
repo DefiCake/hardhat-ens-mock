@@ -1,21 +1,17 @@
 // tslint:disable-next-line no-implicit-dependencies
-import { assert, expect } from "chai";
+import { assert } from "chai";
 import * as ethers from "ethers";
 import {
   TASK_NODE,
   TASK_TEST_SETUP_TEST_ENVIRONMENT,
 } from "hardhat/builtin-tasks/task-names";
-import path from "path";
 import { abi as ENS_ABI } from "@ensdomains/ens/build/contracts/ENS.json";
 import {
   abi as ENS_RESOLVER_ABI,
   bytecode as ENS_RESOLVER_BYTECODE,
 } from "./artifacts/Resolver.json";
 
-import {
-  ENS_OPEN_RESOLVER_ADDRESS,
-  ENS_REGISTRY_ADDRESS,
-} from "../src/constants";
+import { ENS_REGISTRY_ADDRESS } from "../src/constants";
 
 import { useEnvironment } from "./helpers";
 import { HashZero } from "@ethersproject/constants";

@@ -12,7 +12,14 @@ import {
 // This import is needed to let the TypeScript compiler know that it should include your type
 // extensions in your npm package's types file.
 import "./type-extensions";
-import { setDomainOwner, setDomainResolver, setupEnsMock } from "./utils";
+import {
+  hreIsEthersV5,
+  hreIsEthersV6,
+  hreIsWeb3JS,
+  setDomainOwner,
+  setDomainResolver,
+  setupEnsMock,
+} from "./utils";
 import { ENS_REGISTRY_ADDRESS } from "./constants";
 import { EnsMockConfig } from "./types";
 
@@ -43,13 +50,19 @@ extendEnvironment((hre) => {
   const ensMock = hre.config.networks[HARDHAT_NETWORK_NAME].ensMock;
   if (!ensMock?.enabled) return;
 
-  if (!!hre.ethers)
+  if (hreIsEthersV5(hre)) {
     hre.ethers.provider._networkPromise.then(
       (network) => (network.ensAddress = ENS_REGISTRY_ADDRESS)
     );
+  }
 
-  if (!!hre.web3)
+  if (hreIsEthersV6(hre)) {
+    // TODO: it seems that the new hardhat-ethers-v6 plugin does not support name resolving for now
+  }
+
+  if (hreIsWeb3JS(hre)) {
     ((hre.web3 as unknown) as any).eth.ens.registryAddress = ENS_REGISTRY_ADDRESS;
+  }
 });
 
 subtask(TASK_NODE_CREATE_SERVER).setAction(async (args, hre, runSuper) => {
