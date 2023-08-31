@@ -10,7 +10,7 @@ export const ENS_REGISTRY_ADDRESS =
   "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e";
 
 export const ENS_OPEN_RESOLVER_ADDRESS =
-  "0x" + keccak256(toUtf8Bytes("resolver")).substring(26);
+  "0x" + keccak256(toUtf8Bytes("hardhat-ens-mock-resolver")).substring(26);
 export const ENS_OPEN_RESOLVER_BYTECODE = OPEN_RESOLVER.deployedBytecode;
 
 export const ENS_OPEN_RESOLVER_DOMAIN = namehash("resolver");

@@ -5,6 +5,7 @@ import "hardhat/types/runtime";
 import "hardhat/types/config";
 import { EnsMockConfig, RPC } from "./types";
 import { JsonRpcServer } from "hardhat/types";
+import * as constants from "./constants";
 
 declare module "hardhat/types/config" {
   interface HardhatNetworkConfig {
@@ -36,6 +37,7 @@ declare module "hardhat/types/runtime" {
         hre: HardhatRuntimeEnvironment,
         ownerAccountIndex?: number
       ) => Promise<void>;
+      constants: typeof constants;
     };
   }
 }

@@ -20,8 +20,10 @@ import {
   setDomainResolver,
   setupEnsMock,
 } from "./utils";
-import { ENS_REGISTRY_ADDRESS } from "./constants";
+import * as constants from "./constants";
 import { EnsMockConfig } from "./types";
+
+const { ENS_REGISTRY_ADDRESS } = constants;
 
 extendConfig(
   (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {
@@ -41,6 +43,7 @@ extendEnvironment((hre) => {
   const setDomainResolverFunction = setDomainResolver(hre);
   hre.ensMock = {
     ...hre.ensMock,
+    constants,
     setDomainOwner: setDomainOwnerFunction,
     setDomainResolver: setDomainResolverFunction,
     setupEnsMock,
